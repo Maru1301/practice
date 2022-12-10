@@ -2,7 +2,7 @@ $(function () {
 
     let list = [];
     let videoString1 = "https://www.youtube.com/embed/";
-    let videoString2 = '?&enablejsapi=1'; // to control autoplay here
+    let videoString2 = '?autoplay=1&enablejsapi=1'; // to control autoplay here
     // let playerDiv = document.querySelector('#playerDiv');
     let iframe = document.querySelector('#player');
     iframe.setAttribute('width', '600px');
