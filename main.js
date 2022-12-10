@@ -2,7 +2,7 @@ $(function () {
 
     let list = [];
     let videoString1 = "https://www.youtube.com/embed/";
-    let videoString2 = '?autoplay=0&enablejsapi=1'; // to control autoplay here
+    let videoString2 = '?autoplay=1&enablejsapi=1'; // to control autoplay here
     // let playerDiv = document.querySelector('#playerDiv');
     let iframe = document.querySelector('#player');
     iframe.setAttribute('width', '600px');
@@ -21,35 +21,38 @@ $(function () {
 
     function displayList() {
         let orderList = document.createElement('ul');
-        for (let i = 0; i < list.length - 1; i++) {
+        for (let i = 0; i < list.length; i++) {
             let innerList = document.createElement('li');
-            innerList.setAttribute('class', 'songs');
+            innerList.setAttribute('class', 'song');
             let title = list[i].title;
             if (title.length > 30) {
                 title = title.slice(0, 30) + '...';
             }
             innerList.innerHTML = title;
             let weightedList = document.createElement('ul');
-            weightedList.setAttribute('class', 'weightedList')
+            weightedList.setAttribute('class', 'weightedList');
             let weightedScore = `<li class="weighted"></li>`;
+            let weightedActive = '<li class="weighted active"></li>';
             for (let i = 0; i < 5; i++) {
-                weightedList.innerHTML += weightedScore;
+                if (i == 0) {
+                    weightedList.innerHTML += weightedActive;
+                } else {
+                    weightedList.innerHTML += weightedScore;
+                }
             }
             innerList.appendChild(weightedList);
             orderList.appendChild(innerList);
         }
         divList.appendChild(orderList);
 
-        $('.songs').on('click', function () {
-            let title = $(this)[0].innerText.slice(0, 20);
-            let song = list.find(item => item.title.startsWith(title));
+        $('.song').on('click', function () {
+            let song = getSong($(this)[0]);
             iframe.setAttribute('src', song.url);
         })
 
         $('.weighted').on('mouseenter', function () {
             let weightedList = $(this).parent();
             let activeIndex = weightedList.children('.active').length - 1;
-            console.log(activeIndex);
             let ary = getAry($(this));
             let index = ary.indexOf($(this)[0]);
 
@@ -72,8 +75,10 @@ $(function () {
         })
 
         $('.weighted').on('click', function () {
+            let song = getSong($(this).closest('.song')[0]);
             let ary = getAry($(this));
             let index = ary.indexOf($(this)[0]);
+            song.weighted = index + 1;
 
             for (let i = 0; i < ary.length; i++) {
                 if (i <= index)
@@ -83,7 +88,13 @@ $(function () {
                 }
             }
             $(this).parent().children().off('mouseleave');
+            event.stopPropagation();
         })
+    }
+
+    function getSong(data) {
+        let title = data.innerText.slice(0, 20);
+        return list.find(item => item.title.startsWith(title));
     }
 
     function getAry(dom) {
@@ -111,22 +122,14 @@ $(function () {
     }
 
     function getAll(datas) {
-        let w = 0;
+        let w = 1;
         for (let data of datas) {
-            w++;
-            if (w % 2 == 0) {
-                w++;
-            }
             let item = {};
             item.url = videoString1 + data.snippet.resourceId.videoId + videoString2;
             item.title = data.snippet.title;
             item.weighted = w;
             list.push(item);
         }
-
-        let item = {};
-        item.w = w;
-        list.push(item);
 
         var randomVideoUrl = getRandom(list);
         iframe.setAttribute('src', randomVideoUrl);
@@ -135,9 +138,16 @@ $(function () {
 
     function getRandom(list) {
         let url;
-        let rand = Math.floor(Math.random() * list[list.length - 1].w);
+        let weightedAry = [];
+        let currentWeight = 0;
         for (let i = 0; i < list.length; i++) {
-            if (rand <= list[i].weighted) {
+            currentWeight += list[i].weighted;
+            weightedAry.push(currentWeight);
+        }
+
+        let rand = Math.floor(Math.random() * currentWeight);
+        for (let i = 0; i < list.length; i++) {
+            if (rand <= weightedAry[i]) {
                 url = list[i].url;
                 break;
             }
