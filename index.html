@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- download the jquery file and link to it -->
+    <script src="jquery-3.6.1.js"></script>
+    <!-- use cdn to link to jquery -->
+    <script defer src="http://code.jquery.com/jquery-3.6.1.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://www.youtube.com/player_api"></script>
+    <script defer src="./main.js"></script>
+    <script defer src="https://www.youtube.com/iframe_api"></script>
+    <link rel="stylesheet" href="./main.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        <input type="text">
+    </header>
+    <div class="mainContainer">
+        <div class="container">
+            <div id="playerDiv">
+                <iframe src="https://www.youtube.com/embed/mJsWL_OOWpg?enablejsapi=1" frameborder="0"
+                    id="player"></iframe>
+                <button id="change">change</button>
+                <!-- <h5 class="record">Record of user actions:</h5> -->
+            </div>
+        </div>
+        <div class="container" id="list">
+
+        </div>
+    </div>
+</body>
+
+</html>
