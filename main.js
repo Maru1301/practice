@@ -2,7 +2,7 @@ $(function () {
 
     let list = [];
     let videoString1 = "https://www.youtube.com/embed/";
-    let videoString2 = '?autoplay=1&enablejsapi=1'; // to control autoplay here
+    let videoString2 = '?&enablejsapi=1'; // to control autoplay here
     // let playerDiv = document.querySelector('#playerDiv');
     let iframe = document.querySelector('#player');
     iframe.setAttribute('width', '600px');
@@ -11,7 +11,16 @@ $(function () {
     btnChange.addEventListener('click', changeSong)
     let divList = document.querySelector('#list');
 
-    getData();
+    $('#search').on('click', function () {
+        let listURL = $('#listURL').val();
+        let urlIndex = listURL.indexOf('list=') + 5;
+        let Id = listURL.slice(urlIndex);
+        list = [];
+        getData(Id);
+        $('#listURL').val('')
+    })
+
+    getData('PLMxNn7qcGI1EDyXTzEOGNRGplQq0TXCs7');
 
     function changeSong() {
         let randURL = getRandom(list);
@@ -20,6 +29,7 @@ $(function () {
     }
 
     function displayList() {
+        divList.innerHTML = '';
         let orderList = document.createElement('ul');
         for (let i = 0; i < list.length; i++) {
             let innerList = document.createElement('li');
@@ -107,12 +117,12 @@ $(function () {
         return ary;
     }
 
-    function getData() {
+    function getData(listId = '') {
         axios.get('https://www.googleapis.com/youtube/v3/playlistItems',
             {
                 params: {
                     part: 'snippet,contentDetails',// 必填，把需要的資訊列出來
-                    playlistId: 'PLMxNn7qcGI1EDyXTzEOGNRGplQq0TXCs7',// 播放清單的id
+                    playlistId: listId,// 播放清單的id
                     maxResults: 50,// 預設為五筆資料，可以設定1~50
                     key: 'AIzaSyDgaSxdat1-2TS2bbcbQfFRAvTADsLl7IQ'
                 }
@@ -131,8 +141,7 @@ $(function () {
             list.push(item);
         }
 
-        var randomVideoUrl = getRandom(list);
-        iframe.setAttribute('src', randomVideoUrl);
+        changeSong();
         displayList();
     }
 
